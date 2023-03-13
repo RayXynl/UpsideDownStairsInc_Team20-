@@ -4,10 +4,13 @@
 #include <system/application.h>
 #include <maths/vector2.h>
 #include <string>
-#include "primitive_builder.h"
 #include <graphics/mesh_instance.h>
 #include <box2d/Box2D.h>
+#include <input/input_manager.h>
+
 #include "game_object.h"
+#include "Player.h"
+#include "primitive_builder.h"
 
 // FRAMEWORK FORWARD DECLARATIONS
 namespace gef
@@ -39,6 +42,7 @@ private:
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
 	gef::Renderer3D* renderer_3d_;
+	gef::InputManager* input_manager_;
 
 	PrimitiveBuilder* primitive_builder_;
 
@@ -46,8 +50,7 @@ private:
 	b2World* world_;
 	
 	// player variables
-	GameObject player_;
-	b2Body* player_body_;
+	Player player_;
 
 	//Enemy Variables
 	GameObject enemy_;

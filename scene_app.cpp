@@ -11,10 +11,10 @@ SceneApp::SceneApp(gef::Platform& platform) :
 	Application(platform),
 	sprite_renderer_(NULL),
 	renderer_3d_(NULL),
+	input_manager_(NULL),
 	primitive_builder_(NULL),
 	font_(NULL),
 	world_(NULL),
-	player_body_(NULL),
 	enemy_body_(NULL)
 {
 }
@@ -26,8 +26,12 @@ void SceneApp::Init()
 	// create the renderer for draw 3D geometry
 	renderer_3d_ = gef::Renderer3D::Create(platform_);
 
+	//Create input manager 
+	input_manager_ = gef::InputManager::Create(platform_);
+
 	// initialise primitive builder to make create some 3D geometry easier
 	primitive_builder_ = new PrimitiveBuilder(platform_);
+
 
 	InitFont();
 	SetupLights();
@@ -36,7 +40,7 @@ void SceneApp::Init()
 	b2Vec2 gravity(0.0f, -9.81f);
 	world_ = new b2World(gravity);
 
-	InitPlayer();
+	player_.Intialise(primitive_builder_, input_manager_, world_);
 	InitGround();
 	InitEnemy();
 }
@@ -75,10 +79,10 @@ bool SceneApp::Update(float frame_time)
 	world_->Step(timeStep, velocityIterations, positionIterations);
 
 	// update object visuals from simulation data
-	player_.UpdateFromSimulation(player_body_);
+	player_.UpdateFromSimulation(player_.GetPlayerBody());
 	enemy_.UpdateFromSimulation(enemy_body_);
 	// don't have to update the ground visuals as it is static
-
+	//player_.Update(frame_time);
 
 	// collision detection
 	// get the head of the contact list
@@ -102,6 +106,7 @@ bool SceneApp::Update(float frame_time)
 				switch (objectA->type_)
 				{
 				case objectType::PLAYER :
+					
 					gef::DebugOut("Player is object A \n");
 					break;
 				case objectType::ENEMY:
@@ -205,31 +210,6 @@ void SceneApp::InitEnemy()
 }
 void SceneApp::InitPlayer()
 {
-	// setup the mesh for the player
-	player_.set_mesh(primitive_builder_->GetDefaultCubeMesh());
-	player_.type_ = objectType::PLAYER;
-	// create a physics body for the player
-	b2BodyDef player_body_def;
-	player_body_def.type = b2_dynamicBody;
-	player_body_def.position = b2Vec2(0.0f, 4.0f);
-	player_body_def.userData.pointer = reinterpret_cast<uintptr_t>(&player_);
-
-	player_body_ = world_->CreateBody(&player_body_def);
-
-	// create the shape for the player
-	b2PolygonShape player_shape;
-	player_shape.SetAsBox(0.5f, 0.5f);
-
-	// create the fixture
-	b2FixtureDef player_fixture_def;
-	player_fixture_def.shape = &player_shape;
-	player_fixture_def.density = 1.0f;
-
-	// create the fixture on the rigid body
-	player_body_->CreateFixture(&player_fixture_def);
-
-	// update visuals from simulation data
-	player_.UpdateFromSimulation(player_body_);
 }
 
 void SceneApp::InitGround()
