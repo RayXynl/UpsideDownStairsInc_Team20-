@@ -28,7 +28,7 @@ void SceneApp::Init()
 
 	//Create input manager 
 	input_manager_ = gef::InputManager::Create(platform_);
-
+	
 	// initialise primitive builder to make create some 3D geometry easier
 	primitive_builder_ = new PrimitiveBuilder(platform_);
 
@@ -64,6 +64,9 @@ void SceneApp::CleanUp()
 
 	delete sprite_renderer_;
 	sprite_renderer_ = NULL;
+
+	delete input_manager_;
+	input_manager_ = NULL;
 }
 
 bool SceneApp::Update(float frame_time)
@@ -82,7 +85,8 @@ bool SceneApp::Update(float frame_time)
 	player_.UpdateFromSimulation(player_.GetPlayerBody());
 	enemy_.UpdateFromSimulation(enemy_body_);
 	// don't have to update the ground visuals as it is static
-	//player_.Update(frame_time);
+
+	player_.Update(frame_time);
 
 	// collision detection
 	// get the head of the contact list
@@ -106,7 +110,6 @@ bool SceneApp::Update(float frame_time)
 				switch (objectA->type_)
 				{
 				case objectType::PLAYER :
-					
 					gef::DebugOut("Player is object A \n");
 					break;
 				case objectType::ENEMY:
@@ -125,14 +128,11 @@ bool SceneApp::Update(float frame_time)
 					gef::DebugOut("Enemy is object B \n");
 				}
 			}
-			//gef::DebugOut("Body A mass is %f \n", bodyA->GetMass());
-			//gef::DebugOut("Body B mass is %f \n", bodyB->GetMass());
 		}
 
 		// Get next contact point
 		contact = contact->GetNext();
 	}
-
 
 	return true;
 }
@@ -169,9 +169,9 @@ void SceneApp::Render()
 	renderer_3d_->set_override_material(NULL);
 
 	//Draw Enemy
-	renderer_3d_->set_override_material(&primitive_builder_->red_material());
-	renderer_3d_->DrawMesh(enemy_);
-	renderer_3d_->set_override_material(NULL);
+	//renderer_3d_->set_override_material(&primitive_builder_->red_material());
+	//renderer_3d_->DrawMesh(enemy_);
+	//renderer_3d_->set_override_material(NULL);
 
 	renderer_3d_->End();
 

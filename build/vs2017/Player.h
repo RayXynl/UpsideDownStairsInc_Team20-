@@ -32,6 +32,11 @@ private:
 
 	//Player Variables
 	b2Body* player_body_;
+	b2BodyDef player_body_def;
+	b2PolygonShape player_shape;
+	b2FixtureDef player_fixture_def;
+
+
 
 	gef::Vector4 scale_, rotation_, position_;
 	

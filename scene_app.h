@@ -61,6 +61,8 @@ private:
 	GameObject ground_;
 	b2Body* ground_body_;
 
+	//input variables
+	const gef::Keyboard* keyboard_;
 	float fps_;
 };
 
